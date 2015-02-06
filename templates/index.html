@@ -241,76 +241,11 @@
                 <script>
  
 
-function draw_histogram(reference, pos_data){
-            var margin = {top: 20, right: 20, bottom: 30, left: 50},
-                width = 300 - margin.left - margin.right,
-                height = 300 - margin.top - margin.bottom;
-
-            var parseDate = d3.time.format("%d-%b-%y").parse;
-
-            var x = d3.time.scale()
-                .range([0, width]);
-
-            var y = d3.scale.linear()
-                .range([height, 0]);
-
-            var xAxis = d3.svg.axis()
-                .scale(x)
-                .orient("bottom");
-
-            var yAxis = d3.svg.axis()
-                .scale(y)
-                .orient("left");
-
-            var area = d3.svg.area()
-                .x(function(d) { return x(d.date); })
-                .y0(height)
-                .y1(function(d) { return y(d.close); });
-
-            var svg = d3.select("#myD3").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-              .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            var data;
-
-            d3.json("data/user/roster/323", function(error, json) {
-
-              if (error) return console.warn(error);
-              data = json;
-              console.log(data);
-
-              x.domain(d3.extent(data, function(d) { return d.points; }));
-              y.domain([0, d3.max(data, function(d) { return d.points; })]);
-
-              svg.append("path")
-                  .datum(data)
-                  .attr("class", "area")
-                  .attr("d", area);
-
-              svg.append("g")
-                  .attr("class", "x axis")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(xAxis);
-
-              svg.append("g")
-                  .attr("class", "y axis")
-                  .call(yAxis)
-                .append("text")
-                  .attr("transform", "rotate(-90)")
-                  .attr("y", 6)
-                  .attr("dy", ".71em")
-                  .style("text-anchor", "end")
-                  .text("Fantasy Points");
-            });
-
-          }
-
-
-
 
             function getUserRosterAndUpdateUi(userId) {
+
+
+
               $.ajax({
                 url: "data/user/roster/" + userId,
               })
@@ -319,8 +254,7 @@ function draw_histogram(reference, pos_data){
                 // Debug print
                 // console.log(jsonString);
 
-                console.log(jsonString);
-                draw_histogram("myD3", JSON);
+                
 
                 // Parse the string into a json object
                 var json = JSON.parse(jsonString);
@@ -333,67 +267,17 @@ function draw_histogram(reference, pos_data){
                     if(json[i].position.indexOf("QB") >= 0) {
                       $("#rosterQB").text(json[i].playername);
 
-                          $("#rosterQBPointChart").sparkline(json[i].points, {
-                              type: 'line',
-                              width: '90%',
-                              height: '75',
-                              fillColor: '',
-                              lineColor: '#fff',
-                              lineWidth: 2,
-                              spotColor: '#fff',
-                              minSpotColor: '#fff',
-                              maxSpotColor: '#fff',
-                              highlightSpotColor: '#fff',
-                              highlightLineColor: '#ffffff',
-                              spotRadius: 4,
-                              highlightLineColor: '#ffffff'
-                          });
-
-                          var pointsLength = QBChart.datasets[0].points.length;
+                          goDoStuff(json[i].playername.trim());
 
 
                     } else if(json[i].position.indexOf("RB") >= 0) {
                       $("#rosterRB").text(json[i].playername);
-                      $("#rosterRBPointChart").sparkline(json[i].points, {
-                              type: 'line',
-                              width: '90%',
-                              height: '75',
-                              fillColor: '',
-                              lineColor: '#fff',
-                              lineWidth: 2,
-                              spotColor: '#fff',
-                              minSpotColor: '#fff',
-                              maxSpotColor: '#fff',
-                              highlightSpotColor: '#fff',
-                              highlightLineColor: '#ffffff',
-                              spotRadius: 4,
-                              highlightLineColor: '#ffffff'
-                      });
+                      
                     }  
                     else if(json[i].position.indexOf("WR") >= 0){
                       $("#rosterWR").text(json[i].playername);
 
-                      $("#rosterWRPointChart").sparkline(json[i].points, {
-                              type: 'line',
-                              width: '90%',
-                              height: '75',
-                              fillColor: '',
-                              lineColor: '#fff',
-                              lineWidth: 2,
-                              spotColor: '#fff',
-                              minSpotColor: '#fff',
-                              maxSpotColor: '#fff',
-                              highlightSpotColor: '#fff',
-                              highlightLineColor: '#ffffff',
-                              spotRadius: 4,
-                              highlightLineColor: '#ffffff'
-                      });
-
-
-
-                         
-
-
+                
 
                     }
                 }
@@ -435,6 +319,94 @@ function draw_histogram(reference, pos_data){
                 });
             });
     </script>
+
+
+
+
+
+
+<script>
+
+function goDoStuff(playername) {
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+                width = 300 - margin.left - margin.right,
+                height = 300 - margin.top - margin.bottom;
+                
+
+
+
+var parseDate = d3.time.format("%m/%d/%y").parse;
+
+var x = d3.time.scale()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var area = d3.svg.area()
+    .x(function(d) { return x(d.date); })
+    .y0(height)
+    .y1(function(d) { return y(d.close); });
+
+$("#myD3").html("");
+
+var svg = d3.select("#myD3").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// var data = [{"date" : "1-Dec-12", "close" : 200} , {"date" : "2-Aug-12", "close" : 401},{"date" : "3-May-12", "close" : 601} , {"date" : "31-Jan-12", "close" : 700}];
+
+d3.json("data/player/points/" + playername, function(error, data) {
+
+  data.forEach(function(d) {
+    d.date = parseDate(d.date);
+    d.close = +d.close;
+  });
+
+
+
+data.sort(function(a,b) { return a.date - b.date } );
+
+
+
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+  y.domain([0, d3.max(data, function(d) { return d.close; })]);
+
+  svg.append("path")
+      .datum(data)
+      .attr("class", "area")
+      .attr("d", area);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Price ($)");
+});
+
+}
+
+</script>
+
 
   
   </body>

@@ -25,10 +25,13 @@ def query_roster(userId):
     return returnArr
 
 def query_player(playerName):
-    rows = session.execute("SELECT points FROM fantasyfootball.playerpoints WHERE playername = \'" + playerName +"\'")
+    rows = session.execute("SELECT points,date FROM fantasyfootball.playerpoints WHERE playername = \'" + playerName +"\'")
     returnArr = []
     for pointRow in rows:
-        returnArr.append(pointRow[0])
+        temp = {};
+        temp["close"] = pointRow[0];
+        temp["date"] = pointRow[1];
+        returnArr.append(temp)
     return returnArr
 
 
