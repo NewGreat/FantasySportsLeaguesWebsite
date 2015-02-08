@@ -28,11 +28,22 @@ def query_player(playerName):
     rows = session.execute("SELECT points,date FROM fantasyfootball.playerpoints WHERE playername = \'" + playerName +"\'")
     returnArr = []
     for pointRow in rows:
-        temp = {};
-        temp["close"] = pointRow[0];
-        temp["date"] = pointRow[1];
+        temp = {}
+        temp["close"] = pointRow[0]
+        temp["date"] = pointRow[1]
         returnArr.append(temp)
     return returnArr
+
+def query_league(leagueid):
+    rows = session.execute("SELECT userid,points from fantasyfootball.userpointsstream WHERE userid IN (120,8713,313,5234,3,2412,41,989) AND date > \'9/7/13\'")
+    returnArr = []
+    for userRow in rows:
+        temp = {}
+        temp["uid"] = userRow[0]
+        temp["points"] = userRow[1]
+        returnArr.append(temp)
+    return returnArr
+
 
 
 @app.route("/management.html")
@@ -62,6 +73,11 @@ def userRoster(userId):
 def playerPoints(playername):
     playerPointsVar = json.dumps(query_player(playername))
     return playerPointsVar
+
+@app.route("/data/league/points/<leagueid>")
+def leaguePoints(leagueid):
+    leaguePointsVar = json.dumps(query_league(leagueid))
+    return leaguePointsVar
 
 
 if __name__ == "__main__":

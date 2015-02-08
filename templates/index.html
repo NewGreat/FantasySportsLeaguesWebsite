@@ -7,7 +7,7 @@
     <meta name="author" content="Dashboard">
     <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
 
-    <title>Fantasy Football League</title>
+    <title>4F Sports</title>
 
     <!-- Bootstrap core CSS -->
     <link href="static/css/bootstrap.css" rel="stylesheet">
@@ -50,6 +50,31 @@
       opacity: 0.8;
     }
 
+    .axisbar path,
+    .axisbar line {
+      fill: none;
+      stroke: black;
+      shape-rendering: crispEdges;
+    }
+
+    .x.axisbar path {
+      display: none;
+    }
+
+    .axisbar text {
+      font-family: sans-serif;
+      font-size: 12px;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .bar:hover {
+      fill: brown;
+    }
+
+
   </style>
 
   <body>
@@ -62,7 +87,7 @@
                   <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
               </div>
             <!--logo start-->
-            <a href="index.html" class="logo"><b>Fantasy Football League</b></a>
+            <a href="index.html" class="logo"><b>4F: Fantastical, fast, and furious fantasy leagues</b></a>
             <!--logo end-->
         </header>
       <!--header end-->
@@ -121,7 +146,7 @@
                 <div class="darkblue-header">
                   <h5 id="rosterQB">QB</h5>
                 </div>
-                <div id="rosterQBChart" class="chart mt">
+                <div id="rosterQBChart">
                 </div>
               </div>
             </div><!-- /col-md-4 -->
@@ -132,7 +157,7 @@
                 <div class="darkblue-header">
                   <h5 id="rosterRB">RB</h5>
                 </div>
-                <div id="rosterRBChart" class="chart mt">
+                <div id="rosterRBChart">
                 </div>
               </div>
             </div><!-- /col-md-4 -->
@@ -143,8 +168,7 @@
                 <div class="darkblue-header">
                   <h5 id="rosterWR">WR</h5>
                 </div>
-                <div id="rosterWRChart" class="chart mt">
-                </div>
+                <div id="rosterWRChart"></div>
               </div>
             </div><!-- /col-md-4 -->
                       	
@@ -154,14 +178,12 @@
 
 
                     
-                    <div class="col-lg-12">
-                          <div class="content-panel">
-                <h4><i class="fa fa-angle-right"></i> Your Fantasy Points!</h4>
-                              <div class="panel-body text-center">
-                                  <canvas id="line" height="300" width="400"></canvas>
-                              </div>
-                          </div>
-                      </div>
+             <div class="col-lg-12">
+                <div class="content-panel">
+                  <h4><i class="fa fa-angle-right"></i> Your Fantasy Points!</h4>
+                  <div id="leagueChart"></div
+                </div>
+              </div>
 					
 					
                   </div><!-- /col-lg-9 END SECTION MIDDLE -->
@@ -179,7 +201,7 @@
       <!--footer start-->
       <footer class="site-footer">
           <div class="text-center">
-              Insigh Data Science
+              Insight Data Science
               <a href="index.html#" class="go-top">
                   <i class="fa fa-angle-up"></i>
               </a>
@@ -197,7 +219,6 @@
     <script src="static/js/jquery.nicescroll.js" type="text/javascript"></script>
     <script src="static/js/jquery.sparkline.js"></script>
 
-
     <!--common script for all pages-->
     <script src="static/js/common-scripts.js"></script>
     <script type="text/javascript" src="static/js/gritter/js/jquery.gritter.js"></script>
@@ -207,108 +228,18 @@
     <script src="static/js/sparkline-chart.js"></script>    
     <script src="static/js/chart-master/Chart.js"></script>
     <script src="static/js/chartjs-conf.js"></script>
+    <script src="static/js/player-user-charts.js"></script>
 
     <!-- To Do: host my version -->
     <script src="http://d3js.org/d3.v3.js"></script>
 
-
-    <!-- more scripts -->
-
-    <!-- format me (indents and stuff) -->
-                <script>
- 
-
-
-            function getUserRosterAndUpdateUi(userId) {
-
-
-
-              $.ajax({
-                url: "data/user/roster/" + userId,
-              })
-              .done(function( jsonString ) {
-                
-                // Debug print
-                // console.log(jsonString);
-
-                // Parse the string into a json object
-                var json = JSON.parse(jsonString);
-                for (var i = 0; i < json.length; i++) {
-                    
-                    // Debug print to web console
-                    // console.log(json[i].position + " " + json[i].playername);
-
-                    // Used index of because the json is returned as " QB" (extra leading space for some reason)
-                    if(json[i].position.indexOf("QB") >= 0) {
-                      $("#rosterQB").text(json[i].playername);
-                      goDoStuff(json[i].playername.trim(),"#rosterQBChart");
-
-
-                    } else if(json[i].position.indexOf("RB") >= 0) {
-                      $("#rosterRB").text(json[i].playername,"#rosterRBChart");
-                      goDoStuff(json[i].playername.trim(),"#rosterRBChart");
-                      
-                    }  
-                    else if(json[i].position.indexOf("WR") >= 0){
-                      $("#rosterWR").text(json[i].playername,"rosterWRChart");
-                      goDoStuff(json[i].playername.trim(),"#rosterWRChart");
-                    }
-                }
-
-
-
-
-              });
-            };
-
-
-         var lineChartData = {
-                              labels : ["","","","","","",""],
-                              datasets : [
-                                  {
-                                      fillColor : "rgba(151,187,205,0.5)",
-                                      strokeColor : "rgba(151,187,205,1)",
-                                      pointColor : "rgba(151,187,205,1)",
-                                      pointStrokeColor : "#fff",
-                                      data : [3,52,52,55,12,67]
-                                  }
-                              ]
-
-                          };
-
-
-        var QBChart = new Chart(document.getElementById("line").getContext("2d")).Line(lineChartData);
-
-    </script>
-
-
-
     <script>
-            $(document).ready(function() {
-                $("#userRosterShowBtn").click(function(){
-                  var userId = $("#userRoserUserId").val();
-                  getUserRosterAndUpdateUi(userId);
-                });
-            });
-    </script>
+  var margin = {top: 20, right: 20, bottom: 30, left: 75},
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
 
-
-
-
-
-
-<script>
-
-function goDoStuff(playername, chartspace) {
-
-  var margin = {top: 5, right: 5, bottom: 40, left: 28},
-                  width = 250 - margin.left - margin.right,
-                  height = 150 - margin.top - margin.bottom;
-
-  var parseDate = d3.time.format("%m/%d/%y").parse;
-
-  var x = d3.time.scale()
-      .range([0, width]);
+  var x = d3.scale.ordinal()
+      .rangeRoundBands([0, width], .1);
 
   var y = d3.scale.linear()
       .range([height, 0]);
@@ -319,68 +250,61 @@ function goDoStuff(playername, chartspace) {
 
   var yAxis = d3.svg.axis()
       .scale(y)
-      .orient("left");
+      .orient("left")
+      .ticks(10);
 
-  var area = d3.svg.area()
-      .x(function(d) { return x(d.date); })
-      .y0(height)
-      .y1(function(d) { return y(d.close); });
-
-  $(chartspace).html("");
-
-  var svg = d3.select(chartspace).append("svg")
+  var svg = d3.select("#leagueChart").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  // var data = [{"date" : "1-Dec-12", "close" : 200} , {"date" : "2-Aug-12", "close" : 401},{"date" : "3-May-12", "close" : 601} , {"date" : "31-Jan-12", "close" : 700}];
+  d3.json("data/league/points/233" , function(error, data) {
 
-  d3.json("data/player/points/" + playername, function(error, data) {
-
-    data.forEach(function(d) {
-      d.date = parseDate(d.date);
-      d.close = +d.close;
-    });
-
-  data.sort(function(a,b) { return a.date - b.date } );
-
-
-    x.domain(d3.extent(data, function(d) { return d.date; }));
-    y.domain([0, d3.max(data, function(d) { return d.close; })]);
-
-    svg.append("path")
-        .datum(data)
-        .attr("class", "area")
-        .attr("d", area);
+    x.domain(data.map(function(d) { return d.uid; }));
+    y.domain([0, d3.max(data, function(d) { return d.points; })]);
 
     svg.append("g")
-        .attr("class", "x axis")
+        .attr("class", "x axisbar")
         .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-      .selectAll("text")
-        .attr("y",0)
-        .attr("x", 9)
-      .attr("dy", ".35em")
-      .attr("transform", "rotate(90)")
-      .style("text-anchor", "start");
+        .call(xAxis);
 
     svg.append("g")
-        .attr("class", "y axis")
+        .attr("class", "y axisbar")
         .call(yAxis)
       .append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        .text("Fantasy Points");
+        .text("Points");
+
+    svg.selectAll(".bar")
+        .data(data)
+      .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) { return x(d.uid); })
+        .attr("width", x.rangeBand())
+        .attr("y", function(d) { return y(d.points); })
+        .attr("height", function(d) { return height - y(d.points)});
+
+    svg.selectAll(".bar")
+        .data(data)
+      .enter().append("text")
+        .attr("x", x.rangeBand()+ margin.left )
+        .attr("y", function(d) { return y(d.points) -10; })
+        .attr("dy", ".75em")
+        .text(function(d) { return d.points; });
+
+
+
   });
 
+  function type(d) {
+    d.points = +d.points;
+    return d;
   }
-
-</script>
-
-
+    </script>
   
   </body>
 </html>
