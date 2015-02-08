@@ -14,12 +14,13 @@ def query_db():
     return rows
 
 def query_roster(userId):
-    rows = session.execute("SELECT position,playername FROM fantasyfootball.userroster WHERE userid = " + userId)
+    rows = session.execute("SELECT position,playername,leagueid FROM fantasyfootball.userroster WHERE userid = " + userId)
     returnArr = []
     for rosterRow in rows:
     	temp = {}
     	temp["position"] = rosterRow[0]
     	temp["playername"] = rosterRow[1]
+        temp["leagueid"] = rosterRow[2]
         temp["points"] = query_player(rosterRow[1].strip())
     	returnArr.append(temp)
     return returnArr
@@ -34,8 +35,8 @@ def query_player(playerName):
         returnArr.append(temp)
     return returnArr
 
-def query_league(leagueid):
-    rows = session.execute("SELECT userid,points from fantasyfootball.userpointsstream WHERE userid IN (120,8713,313,5234,3,2412,41,989) AND date > \'9/7/13\'")
+def query_league(leagueid, users):
+    rows = session.execute("SELECT userid,points from fantasyfootball.userpointsstream WHERE userid IN (" + users + ") AND date > \'9/7/13\'")
     returnArr = []
     for userRow in rows:
         temp = {}
@@ -44,6 +45,16 @@ def query_league(leagueid):
         returnArr.append(temp)
     return returnArr
 
+def query_league_users(leagueid):
+    rows = session.execute("SELECT userid FROM fantasyfootball.leagueusers WHERE leagueid = " + leagueid)
+    userIdString = ""
+    count = 0
+    for leagueRow in rows:
+        if count != 0:
+            userIdString += ","
+        userIdString += str(leagueRow[0])
+        count += 1
+    return userIdString 
 
 
 @app.route("/management.html")
@@ -76,9 +87,14 @@ def playerPoints(playername):
 
 @app.route("/data/league/points/<leagueid>")
 def leaguePoints(leagueid):
-    leaguePointsVar = json.dumps(query_league(leagueid))
+    users = query_league_users(leagueid)
+    leaguePointsVar = json.dumps(query_league(leagueid, users))
     return leaguePointsVar
 
+@app.route("/data/league/users/<leagueid>")
+def leagueUsers(leagueid):
+    leagueUsersVar = json.dumps(query_league_users(leagueid))
+    return leagueUsersVar
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', debug=True)

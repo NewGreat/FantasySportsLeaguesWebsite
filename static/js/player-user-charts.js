@@ -5,6 +5,15 @@ $(document).ready(function() {
     });
 });
 
+// Global variable for the user id
+var globalLeagueid = -1;
+
+// Set the interval to update the chart if a globalLeagueId was set
+window.setInterval(function(){
+  if(globalLeagueid != -1)
+    goDoThingsLeague();
+}, 5000);
+
 function getUserRosterAndUpdateUi(userId) {
 
               $.ajax({
@@ -37,6 +46,13 @@ function getUserRosterAndUpdateUi(userId) {
                       $("#rosterWR").text(json[i].playername,"rosterWRChart");
                       goDoStuff(json[i].playername.trim(),"#rosterWRChart");
                     }
+                }
+
+                // Update the league chart
+                if(json.length > 0) {
+                  // Set the global variable for the league id
+                  globalLeagueid = json[0].leagueid;
+                  goDoThingsLeague();
                 }
 
               });
@@ -121,10 +137,12 @@ function goDoStuff(playername, chartspace) {
 
 }
 
-/*
-function goDoThings(leagueID){
+ function goDoThingsLeague() {
 
-  var margin = {top: 20, right: 20, bottom: 30, left: 40},
+
+  console.log("updating the leauge chart for leagueid, " + globalLeagueid);
+
+  var margin = {top: 20, right: 20, bottom: 30, left: 75},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
@@ -141,46 +159,60 @@ function goDoThings(leagueID){
   var yAxis = d3.svg.axis()
       .scale(y)
       .orient("left")
-      .ticks(10, "%");
+      .ticks(10);
 
-  var svg = d3.select("leagueChart").append("svg")
+      $("#leagueChart").html("");
+
+  var svg = d3.select("#leagueChart").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  d3.tsv("data.tsv", type, function(error, data) {
-    x.domain(data.map(function(d) { return d.letter; }));
-    y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+  d3.json("data/league/points/" + globalLeagueid , function(error, data) {
+
+    x.domain(data.map(function(d) { return d.uid; }));
+    y.domain([0, d3.max(data, function(d) { return d.points; })]);
 
     svg.append("g")
-        .attr("class", "x axis")
+        .attr("class", "x axisbar")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis);
 
     svg.append("g")
-        .attr("class", "y axis")
+        .attr("class", "y axisbar")
         .call(yAxis)
       .append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        .text("Frequency");
+        .text("Points");
 
     svg.selectAll(".bar")
         .data(data)
       .enter().append("rect")
         .attr("class", "bar")
-        .attr("x", function(d) { return x(d.letter); })
+        .attr("x", function(d) { return x(d.uid); })
         .attr("width", x.rangeBand())
-        .attr("y", function(d) { return y(d.frequency); })
-        .attr("height", function(d) { return height - y(d.frequency); });
+        .attr("y", function(d) { return y(d.points); })
+        .attr("height", function(d) { return height - y(d.points)});
+
+    svg.selectAll(".bar")
+        .data(data)
+      .enter().append("text")
+        .attr("x", x.rangeBand()+ margin.left )
+        .attr("y", function(d) { return y(d.points) -10; })
+        .attr("dy", ".75em")
+        .text(function(d) { return d.points; });
+
+
 
   });
 
   function type(d) {
-    d.frequency = +d.frequency;
+    d.points = +d.points;
     return d;
   }
-}*/
+
+};

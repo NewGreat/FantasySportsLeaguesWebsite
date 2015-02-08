@@ -70,9 +70,6 @@
       fill: steelblue;
     }
 
-    .bar:hover {
-      fill: brown;
-    }
 
 
   </style>
@@ -234,6 +231,8 @@
     <script src="http://d3js.org/d3.v3.js"></script>
 
     <script>
+
+ function updateBarChar(leagueId) {   
   var margin = {top: 20, right: 20, bottom: 30, left: 75},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
@@ -253,13 +252,15 @@
       .orient("left")
       .ticks(10);
 
+      $("#leagueChart").html("");
+
   var svg = d3.select("#leagueChart").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  d3.json("data/league/points/233" , function(error, data) {
+  d3.json("data/league/points/" + leagueId , function(error, data) {
 
     x.domain(data.map(function(d) { return d.uid; }));
     y.domain([0, d3.max(data, function(d) { return d.points; })]);
@@ -304,6 +305,8 @@
     d.points = +d.points;
     return d;
   }
+
+};
     </script>
   
   </body>
