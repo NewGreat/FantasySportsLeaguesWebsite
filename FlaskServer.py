@@ -56,21 +56,29 @@ def query_league_users(leagueid):
         count += 1
     return userIdString 
 
-
-@app.route("/management.html")
-def management():
-	return render_template('management.html',title="Customer Analysis")
+# PAGE ROUTES:
 
 @app.route('/index')
 def index():
 	user = {'nickname': 'Sili'}
 	return render_template('index.html', title='Home', user=user)
 
-@app.route("/topusers")
+@app.route('/about')
+def about():
+    return render_template('about.html', title='About')
+
+@app.route("/analytics")
 def topusers():
-	return render_template('management.html',messages=query_db())
+    return render_template('analytics.html', title='Analytics', messages=query_db())
+
+@app.route("/api")
+def api():
+    return render_template('api.html', title='API')
+
+
+# API ROUTES:
 	
-@app.route("/topusers/json")
+@app.route("/data/topusers/json")
 def topusersJson():
 	topUsersVar = json.dumps(query_db());
 	return topUsersVar

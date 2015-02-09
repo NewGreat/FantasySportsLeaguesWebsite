@@ -34,37 +34,40 @@
                   <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
               </div>
             <!--logo start-->
-            <a href="index.html" class="logo"><b>Fantasy Football League</b></a>
+            <a href="index.html" class="logo"><b>4F: Fantastical, fast, and furious fantasy leagues</b></a>
             <!--logo end-->
         </header>
       
-      <!-- **********************************************************************************************************************************************************
-      MAIN SIDEBAR MENU
-      *********************************************************************************************************************************************************** -->
+
       <!--sidebar start-->
       <aside>
           <div id="sidebar"  class="nav-collapse ">
               <!-- sidebar menu start-->
               <ul class="sidebar-menu" id="nav-accordion">
-
-              	  <h5 class="centered">Customer Analysis</h5>
               	  	
                   <li class="mt">
                       <a href="index">
                           <i class="fa fa-dashboard"></i>
-                          <span>User</span>
+                          <span>Dashboard</span>
                       </a>
                   </li>
 
                   <li class="sub-menu">
-                      <a href="javascript:;" >
+                      <a class="active" href="analytics" >
                           <i class="fa fa-desktop"></i>
-                          <span>Customer Analysis</span>
+                          <span>Analytics</span>
                       </a>
                   </li>
 
                   <li class="sub-menu">
-                      <a href="data/user/roster/3582/" >
+                      <a href="api" >
+                          <i class="fa fa-desktop"></i>
+                          <span>API</span>
+                      </a>
+                  </li>
+
+                  <li class="sub-menu">
+                      <a href="about" >
                           <i class="fa fa-cogs"></i>
                           <span>About</span>
                       </a>
@@ -75,13 +78,11 @@
       </aside>
       <!--sidebar end-->
       
-      <!-- **********************************************************************************************************************************************************
-      MAIN CONTENT
-      *********************************************************************************************************************************************************** -->
+ 
       <!--main content start-->
       <section id="main-content">
           <section class="wrapper">
-          	<h3><i class="fa fa-angle-right"></i> Customer Analysis</h3>
+          	<h3><i class="fa fa-angle-right"></i> Analytics</h3>
 				<div class="row">
 				          
 	                  <div class="col-md-12 mt">
@@ -139,17 +140,6 @@
 
     <!--common script for all pages-->
     <script src="static/js/common-scripts.js"></script>
-
-    <!--script for this page-->
     
-  <script>
-      //custom select box
-
-      $(function(){
-          $('select.styled').customSelect();
-      });
-
-  </script>
-
   </body>
 </html>
