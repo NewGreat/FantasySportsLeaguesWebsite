@@ -16,6 +16,12 @@ window.setInterval(function(){
 
 function getUserRosterAndUpdateUi(userId) {
 
+
+
+
+
+              // ajax call
+
               $.ajax({
                 url: "data/user/roster/" + userId,
               })
@@ -137,42 +143,105 @@ function goDoStuff(playername, chartspace) {
 
 }
 
- function goDoThingsLeague() {
+// define lots of globals
+function initBarChart() {
 
-
-  console.log("updating the leauge chart for leagueid, " + globalLeagueid);
-
-  var margin = {top: 20, right: 20, bottom: 30, left: 75},
+ margin = {top: 20, right: 20, bottom: 30, left: 75},
       width = 960 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
-  var x = d3.scale.ordinal()
+   x = d3.scale.ordinal()
       .rangeRoundBands([0, width], .1);
 
-  var y = d3.scale.linear()
+   y = d3.scale.linear()
       .range([height, 0]);
 
-  var xAxis = d3.svg.axis()
+   xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom");
 
-  var yAxis = d3.svg.axis()
+   yAxis = d3.svg.axis()
       .scale(y)
       .orient("left")
       .ticks(10);
 
-      $("#leagueChart").html("");
 
-  var svg = d3.select("#leagueChart").append("svg")
+   svg = d3.select("#leagueChart").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
+
+
+
+};
+
+
+// init the bar chart
+$(document).ready(function() {
+  console.log("document ready...");
+  initBarChart();
+});
+
+var oldData = {};
+ function goDoThingsLeague() {
+
+
+  console.log("updating the leauge chart for leagueid, " + globalLeagueid);
+
   d3.json("data/league/points/" + globalLeagueid , function(error, data) {
+
+    console.log("start go do things leage");
+
+    if(JSON.stringify(data) == oldData) {
+      console.log("the same!");
+      return;
+    }
+
+
+
+    oldData = JSON.stringify(data);
+
+
+    // clear the bar chart
+  svg.selectAll(".bar")
+              .remove(); 
+
+              svg.selectAll("g").remove(); 
+
+
+              
 
     x.domain(data.map(function(d) { return d.uid; }));
     y.domain([0, d3.max(data, function(d) { return d.points; })]);
+
+
+
+    svg.selectAll(".bar")
+        .data(data)
+      .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) { return x(d.uid); })
+        .attr("width", x.rangeBand())
+        .attr("y", height)
+        .attr("height", 0)
+        .transition()
+        .duration(1000)
+        .attr("y", function(d) { return y(d.points); })
+        .attr("height", function(d) { return height - y(d.points)});
+
+
+
+    svg.selectAll(".bar")
+        .data(data)
+      .enter().append("text")
+        .attr("x", x.rangeBand()+ margin.left )
+        .attr("y", function(d) { return y(d.points) -10; })
+        .attr("dy", ".75em")
+        .text(function(d) { return d.points; });
+
 
     svg.append("g")
         .attr("class", "x axisbar")
@@ -189,26 +258,10 @@ function goDoStuff(playername, chartspace) {
         .style("text-anchor", "end")
         .text("Points");
 
-    svg.selectAll(".bar")
-        .data(data)
-      .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", function(d) { return x(d.uid); })
-        .attr("width", x.rangeBand())
-        .attr("y", function(d) { return y(d.points); })
-        .attr("height", function(d) { return height - y(d.points)});
-
-    svg.selectAll(".bar")
-        .data(data)
-      .enter().append("text")
-        .attr("x", x.rangeBand()+ margin.left )
-        .attr("y", function(d) { return y(d.points) -10; })
-        .attr("dy", ".75em")
-        .text(function(d) { return d.points; });
-
-
 
   });
+
+
 
   function type(d) {
     d.points = +d.points;

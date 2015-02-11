@@ -36,7 +36,7 @@ def query_player(playerName):
     return returnArr
 
 def query_league(leagueid, users):
-    rows = session.execute("SELECT userid,points from fantasyfootball.userpointsstream WHERE userid IN (" + users + ") AND date > \'9/7/13\'")
+    rows = session.execute("SELECT userid,points from fantasyfootball.userpointsstream WHERE userid IN (" + users + ")")
     returnArr = []
     for userRow in rows:
         temp = {}
