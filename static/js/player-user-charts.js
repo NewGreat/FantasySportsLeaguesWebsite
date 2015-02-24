@@ -16,9 +16,8 @@ window.setInterval(function(){
 
 function getUserRosterAndUpdateUi(userId) {
 
-
-
-
+            // update the box chart!
+            goDoStuffBar(userId);
 
               // ajax call
 
@@ -147,8 +146,8 @@ function goDoStuff(playername, chartspace) {
 function initBarChart() {
 
  margin = {top: 20, right: 20, bottom: 30, left: 75},
-      width = 960 - margin.left - margin.right,
-      height = 500 - margin.top - margin.bottom;
+      width = 600 - margin.left - margin.right,
+      height = 400 - margin.top - margin.bottom;
 
    x = d3.scale.ordinal()
       .rangeRoundBands([0, width], .1);
@@ -171,11 +170,6 @@ function initBarChart() {
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-
-
-
 };
 
 
@@ -200,8 +194,6 @@ var oldData = {};
       return;
     }
 
-
-
     oldData = JSON.stringify(data);
 
 
@@ -212,7 +204,7 @@ var oldData = {};
               svg.selectAll("g").remove(); 
 
 
-              
+
 
     x.domain(data.map(function(d) { return d.uid; }));
     y.domain([0, d3.max(data, function(d) { return d.points; })]);

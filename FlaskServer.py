@@ -14,7 +14,7 @@ def query_db():
     return rows
 
 def query_roster(userId):
-    rows = session.execute("SELECT position,playername,leagueid FROM fantasyfootball.userroster WHERE userid = " + userId)
+    rows = session.execute("SELECT position,playername,leagueid FROM fantasyfootball.userroster_test WHERE userid = " + userId)
     returnArr = []
     for rosterRow in rows:
     	temp = {}
@@ -26,6 +26,7 @@ def query_roster(userId):
     return returnArr
 
 def query_player(playerName):
+    playerName = playerName.replace("'","''")
     rows = session.execute("SELECT points,date FROM fantasyfootball.playerpoints WHERE playername = \'" + playerName +"\'")
     returnArr = []
     for pointRow in rows:
@@ -34,6 +35,31 @@ def query_player(playerName):
         temp["date"] = pointRow[1]
         returnArr.append(temp)
     return returnArr
+
+def query_roster_analysis(userId):
+    rows = session.execute("SELECT playername FROM fantasyfootball.userroster_test WHERE userid = " + userId + " AND position IN (\'QB\',\'WR\',\'RB\')")
+    returnArr = []
+    count = 1
+    for rosterRow in rows:
+        #returnArr.append(query_player_analysis(rosterRow[0].strip(), count))
+        tempArr = query_player_analysis(rosterRow[0].strip(), count)
+        for tempRow in tempArr:
+            returnArr.append(tempRow)
+        count = count + 1
+    return returnArr
+
+def query_player_analysis(playerName, count):
+    playerName = playerName.replace("'","''")
+    rows = session.execute("SELECT points,date FROM fantasyfootball.playerpoints WHERE playername = \'" + playerName +"\'")
+    returnArr = []
+    for pointRow in rows:
+        temp = {}
+        temp["pname"] = count
+        temp["ppoints"] = pointRow[0]
+        temp["pdate"] = pointRow[1]
+        returnArr.append(temp)
+    return returnArr
+
 
 def query_league(leagueid, users):
     rows = session.execute("SELECT userid,points from fantasyfootball.userpointsstream WHERE userid IN (" + users + ")")
@@ -103,6 +129,11 @@ def leaguePoints(leagueid):
 def leagueUsers(leagueid):
     leagueUsersVar = json.dumps(query_league_users(leagueid))
     return leagueUsersVar
+
+@app.route("/data/user/roster_analysis/<userId>")
+def userRosterAnalysis(userId):
+    userRosterAnalysisVar = json.dumps(query_roster_analysis(userId))
+    return userRosterAnalysisVar
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', debug=True)
